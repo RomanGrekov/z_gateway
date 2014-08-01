@@ -1,5 +1,5 @@
-FileOpsImpl.o /home/linaro/python-openzwave/openzwave/.dep/FileOpsImpl.d : \
- /home/linaro/python-openzwave/openzwave/cpp/src/platform/unix/FileOpsImpl.cpp \
- /home/linaro/python-openzwave/openzwave/cpp/src/platform/unix/FileOpsImpl.h \
- /home/linaro/python-openzwave/openzwave/cpp/src/Defs.h \
- /home/linaro/python-openzwave/openzwave/cpp/src/platform/FileOps.h
+FileOpsImpl.o /home/linaro/z_gateway/python-openzwave/openzwave/.dep/FileOpsImpl.d : \
+ /home/linaro/z_gateway/python-openzwave/openzwave/cpp/src/platform/unix/FileOpsImpl.cpp \
+ /home/linaro/z_gateway/python-openzwave/openzwave/cpp/src/platform/unix/FileOpsImpl.h \
+ /home/linaro/z_gateway/python-openzwave/openzwave/cpp/src/Defs.h \
+ /home/linaro/z_gateway/python-openzwave/openzwave/cpp/src/platform/FileOps.h
