@@ -29,7 +29,12 @@ def louie_value_update(network, node, value):
     print('Value:\n    %s.' % value)
 
 class ZNetwork(object):
-    def __init__(self, device, config):
+    _instance = None
+
+    def __init__(self, device=None, config=None):
+        pass
+
+    def init(self, device, config):
         self.device = device
         self.config = config
 
@@ -48,6 +53,13 @@ class ZNetwork(object):
         dispatcher.connect(louie_network_failed, ZWaveNetwork.SIGNAL_NETWORK_FAILED)
         dispatcher.connect(louie_network_ready, ZWaveNetwork.SIGNAL_NETWORK_READY)
 
+    def __new__(class_, *args, **kwargs):
+        if not isinstance(class_._instance, class_):
+            class_._instance = object.__new__(class_, *args, **kwargs)
+            class_._instance.init(*args, **kwargs)
+            class_._instance.start(300)
+        return class_._instance
+
     def start(self, timeout):
         print "Start network... "
         self.network.start()
@@ -63,6 +75,9 @@ class ZNetwork(object):
 
     def stop(self):
         self.network.stop()
+
+    def get_home_id(self):
+        return self.network.home_id
 
     def get_node(self, node_id):
         return self.network.nodes[node_id]
@@ -93,96 +108,8 @@ class ZNetwork(object):
             node_dict["CanSleep"] = node.can_wake_up()
             nodes.append(node_dict)
         return nodes
-
-        '''
-            groups = {}
-            for grp in network.nodes[node].groups :
-                groups[network.nodes[node].groups[grp].index] = {'label':network.nodes[node].groups[grp].label, 'associations':network.nodes[node].groups[grp].associations}
-            print "%s - Groups : %s" % (network.nodes[node].node_id, groups)
-            values = {}
-            for val in network.nodes[node].values :
-                values[network.nodes[node].values[val].object_id] = {
-                    'label':network.nodes[node].values[val].label,
-                    'help':network.nodes[node].values[val].help,
-                    'command_class':network.nodes[node].values[val].command_class,
-                    'max':network.nodes[node].values[val].max,
-                    'min':network.nodes[node].values[val].min,
-                    'units':network.nodes[node].values[val].units,
-                    'data':network.nodes[node].values[val].data_as_string,
-                    'ispolled':network.nodes[node].values[val].is_polled
-                }
-        '''
-
-#network.controller.node.name = "Test node"
-#time.sleep(10.0)
-
-#network.controller.node.location = "Test location"
-#time.sleep(120.0)
-'''
-print "we are done"
-print "Nodes in network : %s" % network.nodes_count
+    def __del__(self):
+        print "close!!!!"
+        self.network.close()
 
 
-    #print "%s - Values : %s" % (network.nodes[node].node_id, values)
-    #print "------------------------------------------------------------"
-    for cmd in network.nodes[node].command_classes:
-        print "   ---------   "
-        #print "cmd = ",cmd
-        values = {}
-        for val in network.nodes[node].get_values_for_command_class(cmd) :
-            values[network.nodes[node].values[val].object_id] = {
-                'label':network.nodes[node].values[val].label,
-                'help':network.nodes[node].values[val].help,
-                'max':network.nodes[node].values[val].max,
-                'min':network.nodes[node].values[val].min,
-                'units':network.nodes[node].values[val].units,
-                'data':network.nodes[node].values[val].data,
-                'data_str':network.nodes[node].values[val].data_as_string,
-                'genre':network.nodes[node].values[val].genre,
-                'type':network.nodes[node].values[val].type,
-                'ispolled':network.nodes[node].values[val].is_polled,
-                'readonly':network.nodes[node].values[val].is_read_only,
-                'writeonly':network.nodes[node].values[val].is_write_only,
-                }
-        #print "%s - Values for command class : %s : %s" % (network.nodes[node].node_id,
-        #                            network.nodes[node].get_command_class_as_string(cmd),
-        #                            values)
-        print "type: %s" % network.nodes[node].values[val].type
-    print "------------------------------------------------------------"
-print "------------------------------------------------------------"
-
-
-for node in network.nodes:
-    for val in network.nodes[node].get_switches():
-        print("Activate switch")
-        network.nodes[node].set_switch(val,True)
-        time.sleep(10.0)
-        print("Deactivate switch")
-        network.nodes[node].set_switch(val,False)
-        #We only activate the first switch
-        #exit
-time.sleep(120.0)
-'''
-
-device = "/dev/ttyUSB0"
-config = "../../python-openzwave/openzwave/config"
-
-network = ZNetwork(device, config)
-if network.start(180) == 1:
-    print "\nNetwork start fail!"
-
-else:
-    print "\nNetwork start successful!"
-    if network.get_nodes_count() > 1:
-        for node in network.get_nodes_full_info():
-            print node
-
-        node = network.get_node(2)
-        for val in node.get_switches():
-            print "Switcher: %s" % val
-            node.set_switch(val, True)
-        for val in node.get_sensors():
-            print "Sensor: %s" % val
-            print "Sensor val: %s" % node.get_sensor_value(val)
-    time.sleep(100)
-network.stop()

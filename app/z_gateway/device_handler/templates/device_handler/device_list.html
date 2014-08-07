@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Device list{% endblock %}
+
+{% block page_name %}{{ page_name }}{% endblock %}
+
+{% block content %}
+<h1>Devices list</h1>
+    <table class="table table-condensed table-hover">
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Manufact name</th>
+        </tr>
+        {% for node in nodes_list %}
+            <tr>
+                <td>{{ node.node_id }}</td>
+                <td>{{ node.name }}</td>
+                <td>{{ node.manufact_name }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
