@@ -10,4 +10,5 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^device_handler/', include("device_handler.urls")),
+    url(r'^network/', include("network.urls")),
 )

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Network{% endblock %}
+
+{% block page_name %}{{ page_name }}{% endblock %}
+
+{% block content %}
+{% load i18n %}
+    <script src="/static/js/network.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/circle_progress.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/radio_button.css">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Network id</div>
+        <div id="home_id" class="panel-body">
+            {{ network_name }}
+        </div>
+    </div>
+
+    <div class="switch_button_container">
+        <div class="switch">
+            <input type="radio" class="switch-input" name="view" value="on" id="on" onclick="start_network();" checked>
+            <label for="on" class="switch-label switch-label-off">{% trans "On" %}</label>
+            <input type="radio" class="switch-input" name="view" value="off" id="off" onclick="stop_network();">
+            <label for="off" class="switch-label switch-label-on">{% trans "Off" %}</label>
+            <span class="switch-selection switch-blue"></span>
+        </div>
+    </div>
+
+    <div>
+        <div id="progress_bar_div" class="progress_container" hidden>
+            <div class='ring blue'></div>
+            <div id="progress_content">
+                <span>LOADING</span>
+            </div>
+        </div>
+    </div>
+{% endblock %}

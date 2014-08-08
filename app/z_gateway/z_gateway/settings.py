@@ -24,7 +24,8 @@ SECRET_KEY = 'r8=-fc!!tvhji_+_44l$fzn*u(0onxh!z395oir3mjt$#pj(-$'
 DEBUG = True
 
 TEMPLATE_DEBUG = True
-TEMPLATE_DIRS = [os.path.join(BASE_DIR, "z_gateway/templates")]
+TEMPLATE_DIRS = [os.path.join(BASE_DIR, "z_gateway/templates"),
+                 os.path.join(BASE_DIR, "network/templates")]
 
 ALLOWED_HOSTS = []
 
@@ -39,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'device_handler',
+    'network',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -48,6 +50,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 )
 
 TEMPLATE_LOADERS = (

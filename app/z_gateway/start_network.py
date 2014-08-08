@@ -28,13 +28,13 @@ def louie_node_update(network, node):
 def louie_value_update(network, node, value):
     print('Value:\n    %s.' % value)
 
-class ZNetwork(object):
+class Network(object):
     _instance = None
 
-    def __init__(self, device=None, config=None):
-        pass
-
-    def init(self, device, config):
+    def _init(self, device, config, timeout):
+        self.network = None
+        self.status = 1
+        self.timeout = timeout
         self.device = device
         self.config = config
 
@@ -44,7 +44,6 @@ class ZNetwork(object):
         options.set_console_output(False)
         options.set_save_log_level('Debug')
         options.set_logging(True)
-        self.network = None
 
         options.lock()
         self.network = ZWaveNetwork(options, autostart=False)
@@ -53,31 +52,62 @@ class ZNetwork(object):
         dispatcher.connect(louie_network_failed, ZWaveNetwork.SIGNAL_NETWORK_FAILED)
         dispatcher.connect(louie_network_ready, ZWaveNetwork.SIGNAL_NETWORK_READY)
 
-    def __new__(class_, *args, **kwargs):
-        if not isinstance(class_._instance, class_):
-            class_._instance = object.__new__(class_, *args, **kwargs)
-            class_._instance.init(*args, **kwargs)
-            class_._instance.start(300)
-        return class_._instance
-
-    def start(self, timeout):
-        print "Start network... "
         self.network.start()
 
-        for i in range(0,timeout):
-            if self.network.state >= self.network.STATE_READY:
-                return 0
-            else:
-                sys.stdout.write(".")
-                sys.stdout.flush()
-                time.sleep(1.0)
-        return 1
+    def __new__(class_, device=None, config=None, timeout=None):
+        if not isinstance(class_._instance, class_):
+            if not device:
+                return None
+            class_._instance = object.__new__(class_)
+            class_._instance._init(device, config, timeout)
+        return class_._instance
+
+    def __del__(self):
+        self.network.stop()
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        self.timeout -= 1
+        if self.timeout == 0:
+            self.status = 1
+            raise StopIteration
+        if self.network.state >= self.network.STATE_READY:
+            self.status = 0
+            raise StopIteration
+        return self.timeout
+
+    def get_timout(self):
+        return self.timeout
+
+    def get_status(self):
+        return self.status
+
+    def stop(self):
+        self.network.stop()
+
+    def get_state(self):
+        return self.network.state
+
+    def is_stopped(self):
+        return self.network.state == self.network.STATE_STOPPED
+
+    def is_running(self):
+        return self.network.state == self.network.STATE_READY
+
+class ZNetwork(object):
+    def __init__(self, network):
+        self.network = network
 
     def stop(self):
         self.network.stop()
 
     def get_home_id(self):
         return self.network.home_id
+
+    def get_home_id_str(self):
+        return self.network.home_id_str
 
     def get_node(self, node_id):
         return self.network.nodes[node_id]
@@ -108,8 +138,5 @@ class ZNetwork(object):
             node_dict["CanSleep"] = node.can_wake_up()
             nodes.append(node_dict)
         return nodes
-    def __del__(self):
-        print "close!!!!"
-        self.network.close()
 
 

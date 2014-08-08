@@ -5,13 +5,7 @@ from django.shortcuts import get_list_or_404
 
 from device_handler.models import Node
 
-import sys, os
-sys.path.append(os.path.abspath("../"))
-from start_network import ZNetwork
-
 import logging
-
-# Get an instance of a logger
 logger = logging.getLogger(__name__)
 
 def index(request):
@@ -25,8 +19,4 @@ def devices(request):
                "page_name": "Nodes"}
     return render(request, 'device_handler/device_list.html', context)
 
-def get_network(request):
-    network = ZNetwork()
-    context = {"network_name": str(network.get_home_id()),
-               "page_name": "Network"}
-    return render(request, 'device_handler/network.html', context)
+
